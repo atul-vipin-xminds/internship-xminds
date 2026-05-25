@@ -1,2 +1,2 @@
 "Welcome to Git
-Learning from branch1"
+Learning from xminds"

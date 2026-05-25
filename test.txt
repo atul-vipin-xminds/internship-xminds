@@ -1,2 +1,2 @@
 "Welcome to Git
-Learning from branch2"
+Learning from branch1"

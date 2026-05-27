@@ -1,0 +1,105 @@
+question 1
+-----------------------------------------
+CREATE DATABASE library_db;
+ 
+USE library_db;
+ 
+question 2
+-----------------------------------------
+CREATE TABLE author (
+    author_id INT PRIMARY KEY,
+    author_name VARCHAR(100) NOT NULL
+);
+ 
+question 3
+-----------------------------------------
+CREATE TABLE books (
+    book_id INT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    author_id INT,
+    price DECIMAL(10,2),
+    available_copies INT,
+    FOREIGN KEY (author_id) REFERENCES author(author_id)
+);
+ 
+question 4
+-----------------------------------------
+CREATE TABLE members (
+    member_id INT PRIMARY KEY,
+    member_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    joi_date DATE
+);
+ 
+question 5
+-----------------------------------------
+CREATE TABLE issue_book (
+    issue_id INT PRIMARY KEY,
+    member_id INT,
+    book_id INT,
+    issue_date DATE,
+    return_date DATE,
+    FOREIGN KEY (member_id) REFERENCES members(member_id),
+    FOREIGN KEY (book_id) REFERENCES books(book_id)
+);
+ 
+question 6
+-----------------------------------------
+INSERT INTO author (author_id, author_name) VALUES
+(1, 'name1'),
+(2, 'name2'),
+(3, 'name3');
+ 
+INSERT INTO books (book_id, title, author_id, price, available_copies) VALUES
+(101, 'book1', 1, 450.00, 10),
+(102, 'book2', 2, 550.00, 5),
+(103, 'book3', 3, 800.00, 7);
+ 
+INSERT INTO members (member_id, member_name, email, joi_date) VALUES
+(1, 'name1', 'name1@gmail.com', '2024-01-10'),
+(2, 'name2', 'name2@gmail.com', '2024-06-15'),
+(3, 'name3', 'name3@gmail.com', '2025-02-20');
+ 
+INSERT INTO issue_book (issue_id, member_id, book_id, issue_date, return_date) VALUES
+(1, 1, 101, '2025-05-01', '2025-05-10'),
+(2, 2, 102, '2025-05-05', '2025-05-15'),
+(3, 3, 103, '2025-05-08', NULL);
+ 
+question 7
+-----------------------------------------
+SELECT *
+FROM books
+WHERE price > 500;
+ 
+question 8
+-----------------------------------------
+SELECT *
+FROM members
+WHERE joi_date > '2024-06-01';
+ 
+question 9
+-----------------------------------------
+UPDATE books
+SET price = 600.00,
+    available_copies = 8
+WHERE title = 'book2';
+ 
+question 10
+-----------------------------------------
+ALTER TABLE members
+ADD mobile_number VARCHAR(15);
+ 
+question 11
+-----------------------------------------
+SELECT *
+FROM books
+WHERE price > (SELECT AVG(price) FROM books);
+ 
+question 12
+-----------------------------------------
+SELECT *
+FROM members
+WHERE member_id NOT IN (
+    SELECT member_id
+    FROM issue_book
+);

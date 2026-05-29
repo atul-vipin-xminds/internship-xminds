@@ -1,16 +1,6 @@
 sentence = input("Enter a sentence: ")
 
-result = ""
-prev_space = False
+result = " ".join(sentence.split())
 
-for ch in sentence:
-    if ch == " ":
-        if not prev_space:
-            result += ch
-        prev_space = True
-    else:
-        result += ch
-        prev_space = False
-
-print("Sentence after removing extra spaces:")
+print("After removing extra spaces:")
 print(result)

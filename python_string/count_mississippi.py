@@ -1,8 +1,4 @@
 word = "Mississippi"
-count = 0
-
-for ch in word:
-    if ch == 's':
-        count += 1
+count = word.count('s')
 
 print("Number of times 's' appears:", count)

@@ -1,9 +1,8 @@
 sentence = input("Enter a sentence: ")
 
 words = sentence.split()
-result = ""
+words.reverse()
 
-for i in range(len(words) - 1, -1, -1):
-    result += words[i] + " "
+result = " ".join(words)
 
-print("Reversed sentence:", result)
+print(result)

@@ -1,0 +1,10 @@
+snake = input("Enter snake_case string: ")
+
+words = snake.split("_")
+
+camel = words[0]
+
+for word in words[1:]:
+    camel += word.capitalize()
+
+print("Camel Case:", camel)

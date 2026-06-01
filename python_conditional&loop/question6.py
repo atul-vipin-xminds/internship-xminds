@@ -2,10 +2,10 @@
 
 num = int(input("Enter a number: "))
 
-if num >= 0:
-    if num == 0:
-        print("Zero")
-    else:
+match (num > 0, num < 0):
+    case (True, False):
         print("Positive")
-else:
-    print("Negative")
+    case (False, True):
+        print("Negative")
+    case (False, False):
+        print("Zero")

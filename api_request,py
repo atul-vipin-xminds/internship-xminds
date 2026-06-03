@@ -1,0 +1,43 @@
+user = {
+    "id": 1,
+    "name": "Rahul",
+    "email": "rahul@gmail.com",
+    "address": {
+        "city": "Kochi",
+        "state": "Kerala"
+    }
+}
+
+# Extract and display user name
+print("Name:", user["name"])
+
+# Extract and display city
+print("City:", user["address"]["city"])
+
+# Update email
+user["email"] = "rahul1234@gmail.com"
+print("Updated Email:", user["email"])
+
+# Add phone number
+user["phone"] = "9496646692"
+print("Phone:", user["phone"])
+
+# Delete a key (id)
+del user["id"]
+print("After deleting id:", user)
+
+# Check if a key exists
+key = "email"
+if key in user:
+    print("Email exists in the dictionary")
+else:
+    print("Email does not exist in the dictionary")
+
+# Convert dictionary keys to a list
+keys_list = list(user.keys())
+print("Keys List:", keys_list)
+
+# Display all key-value pairs
+print("All Key-Value Pairs:")
+for key, value in user.items():
+    print(key, ":", value)

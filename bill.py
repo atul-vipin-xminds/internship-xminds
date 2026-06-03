@@ -1,4 +1,4 @@
-def restaurant_order(*items_price, **customer):
+def  restaurant_order(*items_price, **customer):
     delivery_charge = 100
     total_order = sum(items_price)
     final_bill = total_order + delivery_charge

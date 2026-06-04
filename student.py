@@ -1,4 +1,4 @@
-def student_performance(*marks, passing_mark=40, **student):
+def  student_performance(*marks, passing_mark=40, **student):
     print("Student Name :", student.get("name"))
     print("Student ID   :", student.get("id"))
 

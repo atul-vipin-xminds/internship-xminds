@@ -8,29 +8,99 @@ class LibraryItem:
 
 
 class Book(LibraryItem):
-    def __init__(self, title, author):
-        super().__init__(title)
-        self.author = author
-        self.borrowed_by = None
+    count = 0      # Static variable
 
-    def display_info(self):      # Polymorphism
+    def __init__(self, book_id, title, author):
+        super().__init__(title)
+        self.__book_id = book_id
+        self._author = author
+        self._borrowed_by = None
+
+        Book.count += 1
+
+    def get_book_id(self):
+        return self.__book_id
+
+    def display_info(self):
         status = "Available" if self._available else "Issued"
 
+        print("Book ID:", self.__book_id)
         print("Title:", self._title)
-        print("Author:", self.author)
+        print("Author:", self._author)
         print("Status:", status)
 
-        if self.borrowed_by:
-            print("Borrowed By:", self.borrowed_by)
+        if self._borrowed_by:
+            print("Borrowed By:", self._borrowed_by)
 
 
 class Member:
+    count = 0      # Static variable
+
     def __init__(self, name):
-        self.name = name
+        self.__name = name
+
+        Member.count += 1
+
+    def get_name(self):
+        return self.__name
 
 
-books = []
-members = []
+class Library:
+    def __init__(self):
+        self.__books = []
+        self.__members = []
+
+    def add_book(self, book):
+        for b in self.__books:
+            if b.get_book_id() == book.get_book_id():
+                print("Book ID already exists.")
+                return
+
+        self.__books.append(book)
+        print("Book added.")
+
+    def add_member(self, member):
+        self.__members.append(member)
+        print("Member registered.")
+
+    def issue_book(self, book_id, member_name):
+        for book in self.__books:
+            if book.get_book_id() == book_id:
+                if book._available:
+                    book._available = False
+                    book._borrowed_by = member_name
+                    print("Book issued.")
+                else:
+                    print("Book already issued.")
+                return
+
+        print("Book not found.")
+
+    def return_book(self, book_id):
+        for book in self.__books:
+            if book.get_book_id() == book_id:
+                book._available = True
+                book._borrowed_by = None
+                print("Book returned.")
+                return
+
+        print("Book not found.")
+
+    def display_books(self):
+        for book in self.__books:
+            book.display_info()
+            print()
+
+        print("Total Books:", Book.count)
+
+    def display_members(self):
+        for member in self.__members:
+            print("Member:", member.get_name())
+
+        print("Total Members:", Member.count)
+
+
+library = Library()
 
 while True:
     print("\n1. Add Book")
@@ -44,55 +114,36 @@ while True:
     choice = input("Enter choice: ")
 
     if choice == "1":
+        book_id = input("Book ID: ")
         title = input("Title: ")
         author = input("Author: ")
-        books.append(Book(title, author))
-        print("Book added.")
+
+        library.add_book(Book(book_id, title, author))
 
     elif choice == "2":
         name = input("Member Name: ")
-        members.append(Member(name))
-        print("Member registered.")
+
+        library.add_member(Member(name))
 
     elif choice == "3":
-        title = input("Book Title: ")
+        book_id = input("Book ID: ")
         member_name = input("Member Name: ")
 
-        for book in books:
-            if book._title == title:
-                if book._available:
-                    book._available = False
-                    book.borrowed_by = member_name
-                    print("Book issued.")
-                else:
-                    print("Book already issued.")
-                break
-        else:
-            print("Book not found.")
+        library.issue_book(book_id, member_name)
 
     elif choice == "4":
-        title = input("Book Title: ")
+        book_id = input("Book ID: ")
 
-        for book in books:
-            if book._title == title:
-                book._available = True
-                book.borrowed_by = None
-                print("Book returned.")
-                break
-        else:
-            print("Book not found.")
+        library.return_book(book_id)
 
     elif choice == "5":
-        for book in books:
-            book.display_info()
-            print()
+        library.display_books()
 
     elif choice == "6":
-        for member in members:
-            print("Member:", member.name)
+        library.display_members()
 
     elif choice == "7":
         break
 
     else:
-        print("Invalid choice")
+        print("Invalid choice.")

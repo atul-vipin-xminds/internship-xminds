@@ -1,6 +1,4 @@
-from .book import Book
-from .library import Library
-from .member import Member
+from .models import Book, Library, Member
 
 
 def run():

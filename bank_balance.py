@@ -1,5 +1,7 @@
 class InsufficientBalanceError(Exception):
-    pass
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
 
 
 balance = 10000
@@ -15,6 +17,6 @@ try:
     print("Withdrawal successful.")
     print("Remaining balance:", balance)
 
-except InsufficientBalanceError:
-    print("Insufficient balance!")
+except InsufficientBalanceError as e:
+    print(e.message)
     print("Available balance:", balance)

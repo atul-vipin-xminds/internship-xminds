@@ -22,6 +22,7 @@ def create_student(student: dict):
     }
 
 
+<<<<<<< HEAD
 # Response Model Example
 @app.post("/students", response_model=StudentResponse)
 def create_students(student: StudentCreate):
@@ -70,3 +71,16 @@ def get_students():
             "email": "rahul@gmail.com"
         }
     ]
+=======
+@app.post("/students")
+def create_students(student: Student):
+    return student
+
+
+@app.post("/student/{course_id}")
+def create_student_with_id(course_id: int, student: Student):
+    return {
+        "course_id": course_id,
+        "student": student
+    }
+>>>>>>> 9a33a95588001eed442789946baed0d369e54feb

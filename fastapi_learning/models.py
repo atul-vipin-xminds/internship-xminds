@@ -7,10 +7,19 @@ class Address(BaseModel):
     state: str
 
 
-class Student(BaseModel):
+# Request Model
+class StudentCreate(BaseModel):
     name: str
     age: int
     course: str
     email: Optional[str] = None
     courses: list[str] = []
     address: Address
+
+
+# Response Model
+class StudentResponse(BaseModel):
+    id: int
+    name: str
+    course: str
+    email: Optional[str] = None

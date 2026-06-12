@@ -1,25 +1,30 @@
-from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy import Column, Integer, String
+from database import Base
 
 
-class Address(BaseModel):
-    city: str
-    state: str
+class Student(Base):
+    __tablename__ = "students"
 
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
-# Request Model
-class StudentCreate(BaseModel):
-    name: str
-    age: int
-    course: str
-    email: Optional[str] = None
-    courses: list[str] = []
-    address: Address
+    name = Column(
+        String(100),
+        nullable=False
+    )
 
+    age = Column(
+        Integer
+    )
 
-# Response Model
-class StudentResponse(BaseModel):
-    id: int
-    name: str
-    course: str
-    email: Optional[str] = None
+    course = Column(
+        String(100)
+    )
+
+    email = Column(
+        String(100),
+        unique=True
+    )

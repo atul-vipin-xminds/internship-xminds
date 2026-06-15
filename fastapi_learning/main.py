@@ -2,14 +2,22 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
 from database import Base, engine, get_db
-from models import Student, StudentProfile, Department
+from models import (
+    Student,
+    StudentProfile,
+    Department,
+    Course
+)
+
 from schemas import (
     StudentCreate,
     StudentResponse,
     StudentProfileCreate,
     StudentProfileResponse,
     DepartmentCreate,
-    DepartmentResponse
+    DepartmentResponse,
+    CourseCreate,
+    CourseResponse
 )
 
 app = FastAPI()
@@ -139,6 +147,48 @@ def create_profile(
     return db_profile
 
 
+@app.post(
+    "/courses",
+    response_model=CourseResponse
+)
+def create_course(
+    course: CourseCreate,
+    db: Session = Depends(get_db)
+):
+    db_course = Course(
+        title=course.title
+    )
+
+    db.add(db_course)
+    db.commit()
+    db.refresh(db_course)
+
+    return db_course
+
+
+@app.post("/students/{student_id}/courses/{course_id}")
+def enroll_student(
+    student_id: int,
+    course_id: int,
+    db: Session = Depends(get_db)
+):
+    student = db.query(Student).filter(
+        Student.id == student_id
+    ).first()
+
+    course = db.query(Course).filter(
+        Course.id == course_id
+    ).first()
+
+    student.courses.append(course)
+
+    db.commit()
+
+    return {
+        "message": "Enrollment successful"
+    }
+
+
 @app.delete("/students/{student_id}")
 def delete_student(
     student_id: int,
@@ -159,6 +209,7 @@ def delete_student(
     return {
         "message": f"Student {student_id} deleted successfully"
     }
+
 
 @app.delete("/departments/{department_id}")
 def delete_department(

@@ -2,6 +2,18 @@ from pydantic import BaseModel
 from typing import Optional
 
 
+class CourseCreate(BaseModel):
+    title: str
+
+
+class CourseResponse(BaseModel):
+    id: int
+    title: str
+
+    class Config:
+        from_attributes = True
+
+
 class StudentProfileBase(BaseModel):
     address: str
     phone: str
@@ -33,6 +45,7 @@ class StudentCreate(StudentBase):
 class StudentResponse(StudentBase):
     id: int
     profile: StudentProfileResponse | None = None
+    courses: list[CourseResponse] = []
 
     class Config:
         from_attributes = True

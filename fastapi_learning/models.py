@@ -1,7 +1,29 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    Table
+)
 from sqlalchemy.orm import relationship
 
 from database import Base
+
+
+student_course = Table(
+    "student_course",
+    Base.metadata,
+    Column(
+        "student_id",
+        Integer,
+        ForeignKey("students.id")
+    ),
+    Column(
+        "course_id",
+        Integer,
+        ForeignKey("courses.id")
+    )
+)
 
 
 class Department(Base):
@@ -19,6 +41,24 @@ class Department(Base):
         "Student",
         back_populates="department",
         cascade="all, delete-orphan"
+    )
+
+
+class Course(Base):
+    __tablename__ = "courses"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    title = Column(String(100))
+
+    students = relationship(
+        "Student",
+        secondary=student_course,
+        back_populates="courses"
     )
 
 
@@ -60,6 +100,12 @@ class Student(Base):
         back_populates="student",
         uselist=False,
         cascade="all, delete-orphan"
+    )
+
+    courses = relationship(
+        "Course",
+        secondary=student_course,
+        back_populates="students"
     )
 
 

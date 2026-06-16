@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database import Base, engine, get_db
@@ -82,10 +82,10 @@ def create_task(
         User.id == task.user_id
     ).first()
 
-    if not user:
-        return {
-            "error": "User not found"
-        }
+    raise HTTPException(
+    status_code=404,
+    detail="User not found"
+    )
 
     db_task = Task(
         title=task.title,
@@ -129,9 +129,10 @@ def create_task_detail(
     ).first()
 
     if not task:
-        return {
-            "error": "Task not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
 
     db_detail = TaskDetail(
         description=detail.description,
@@ -179,19 +180,21 @@ def assign_tag(
         Task.id == task_id
     ).first()
 
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+
     tag = db.query(Tag).filter(
         Tag.id == tag_id
     ).first()
 
-    if not task:
-        return {
-            "error": "Task not found"
-        }
-
     if not tag:
-        return {
-            "error": "Tag not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Tag not found"
+        )
 
     task.tags.append(tag)
 

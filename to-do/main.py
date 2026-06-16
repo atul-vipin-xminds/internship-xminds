@@ -63,9 +63,17 @@ def get_user(
     user_id: int,
     db: Session = Depends(get_db)
 ):
-    return db.query(User).filter(
+    user = db.query(User).filter(
         User.id == user_id
     ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    return user
 
 
 #create task
@@ -82,10 +90,12 @@ def create_task(
         User.id == task.user_id
     ).first()
 
-    raise HTTPException(
-    status_code=404,
-    detail="User not found"
-    )
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+    
 
     db_task = Task(
         title=task.title,
@@ -108,9 +118,17 @@ def get_task(
     task_id: int,
     db: Session = Depends(get_db)
 ):
-    return db.query(Task).filter(
+    task = db.query(Task).filter(
         Task.id == task_id
     ).first()
+
+    if not task:
+        raise HTTPException(
+            status_code=404,
+            detail="Task not found"
+        )
+
+    return task
 
 
 #create task_detail

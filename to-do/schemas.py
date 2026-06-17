@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-#tag
+# TAG
 
 class TagCreate(BaseModel):
     tag_name: str
@@ -15,7 +15,7 @@ class TagResponse(BaseModel):
         from_attributes = True
 
 
-#taskdetail
+# TASK DETAIL
 
 class TaskDetailCreate(BaseModel):
     description: str
@@ -31,7 +31,7 @@ class TaskDetailResponse(BaseModel):
         from_attributes = True
 
 
-#task
+# TASK
 
 class TaskCreate(BaseModel):
     title: str
@@ -51,11 +51,24 @@ class TaskResponse(BaseModel):
         from_attributes = True
 
 
-#user
+# USER
 
 class UserCreate(BaseModel):
     name: str
+    username: str
     email: str
+    password: str
+    role: str
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
 
 
 class UserResponse(BaseModel):

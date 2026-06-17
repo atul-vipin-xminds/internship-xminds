@@ -26,7 +26,6 @@ task_tag = Table(
 )
 
 
-#user
 class User(Base):
     __tablename__ = "users"
 
@@ -34,7 +33,16 @@ class User(Base):
 
     name = Column(String(100))
 
+    username = Column(
+        String(100),
+        unique=True
+    )
+
     email = Column(String(100))
+
+    password = Column(String(255))
+
+    role = Column(String(50))
 
     tasks = relationship(
         "Task",
@@ -42,7 +50,6 @@ class User(Base):
     )
 
 
-#task
 class Task(Base):
     __tablename__ = "tasks"
 
@@ -78,7 +85,6 @@ class Task(Base):
     )
 
 
-#taskdetail
 class TaskDetail(Base):
     __tablename__ = "task_details"
 
@@ -107,7 +113,6 @@ class TaskDetail(Base):
     )
 
 
-#tag
 class Tag(Base):
     __tablename__ = "tags"
 

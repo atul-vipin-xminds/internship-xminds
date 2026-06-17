@@ -17,7 +17,9 @@ SECRET_KEY = settings.SECRET_KEY
 
 ALGORITHM = settings.ALGORITHM
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = (
+    settings.ACCESS_TOKEN_EXPIRE_MINUTES
+)
 
 
 pwd_context = CryptContext(
@@ -47,7 +49,6 @@ def verify_password(
 def create_access_token(
     data: dict
 ):
-
     to_encode = data.copy()
 
     expire = datetime.utcnow() + timedelta(
@@ -70,7 +71,6 @@ def create_access_token(
 def verify_token(
     token: str
 ):
-
     try:
 
         payload = jwt.decode(

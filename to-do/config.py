@@ -18,5 +18,11 @@ class Settings:
         "SECRET_KEY"
     )
 
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(
+        os.getenv(
+            "ACCESS_TOKEN_EXPIRE_MINUTES"
+        )
+    )
+
 
 settings = Settings()

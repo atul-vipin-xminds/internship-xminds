@@ -38,6 +38,8 @@ class User(Base):
         unique=True
     )
 
+    Gender=Column(String(100))
+
     email = Column(String(100))
 
     password = Column(String(255))

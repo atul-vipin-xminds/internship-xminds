@@ -25,7 +25,12 @@ from jwt_utils import (
 )
 
 from routers import (
-    users
+    users,
+    sports,
+    teams,
+    matches,
+    questions,
+    answers
 )
 
 
@@ -62,7 +67,8 @@ async def lifespan(
                     "admin123"
                 ),
                 role="admin",
-                points=0
+                points=0,
+                device_id="admin-device"
             )
 
             db.add(
@@ -91,4 +97,34 @@ app.include_router(
     users.router,
     prefix="/users",
     tags=["Users"]
+)
+
+app.include_router(
+    sports.router,
+    prefix="/sports",
+    tags=["Sports"]
+)
+
+app.include_router(
+    teams.router,
+    prefix="/teams",
+    tags=["Teams"]
+)
+
+app.include_router(
+    matches.router,
+    prefix="/matches",
+    tags=["Matches"]
+)
+
+app.include_router(
+    questions.router,
+    prefix="/questions",
+    tags=["Questions"]
+)
+
+app.include_router(
+    answers.router,
+    prefix="/answers",
+    tags=["Answers"]
 )

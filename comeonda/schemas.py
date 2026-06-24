@@ -1,50 +1,147 @@
-from sqlalchemy import (
-    String,
-    Integer
-)
+from datetime import datetime
 
-from sqlalchemy.orm import (
-    Mapped,
-    mapped_column
-)
-
-from database import Base
+from pydantic import BaseModel, EmailStr
 
 
-class User(Base):
+class UserCreate(BaseModel):
 
-    __tablename__ = "users"
+    name: str
+    username: str
+    email: EmailStr
+    password: str
+    device_id: str
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True,
-        index=True
-    )
+    referral_code: str | None = None
 
-    name: Mapped[str] = mapped_column(
-        String(100)
-    )
 
-    username: Mapped[str] = mapped_column(
-        String(50),
-        unique=True
-    )
+class UserLogin(BaseModel):
 
-    email: Mapped[str] = mapped_column(
-        String(100),
-        unique=True
-    )
+    username: str
+    password: str
 
-    password: Mapped[str] = mapped_column(
-        String(255)
-    )
 
-    role: Mapped[str] = mapped_column(
-        String(20),
-        default="user"
-    )
+cclass UserResponse(BaseModel):
 
-    points: Mapped[int] = mapped_column(
-        Integer,
-        default=500
-    )
+    id: str
+    name: str
+    username: str
+    email: EmailStr
+    role: str
+    points: int
+    device_id: str | None
+    referral_code: str
+    referred_by: str | None
+    class Config:
+        from_attributes = True
+
+
+class TokenResponse(BaseModel):
+
+    access_token: str
+    token_type: str
+
+
+class SportCreate(BaseModel):
+
+    name: str
+
+
+class SportResponse(BaseModel):
+
+    id: str
+    name: str
+
+    class Config:
+        from_attributes = True
+
+
+class TeamCreate(BaseModel):
+
+    sport_id: str
+    team_name: str
+
+
+class TeamResponse(BaseModel):
+
+    id: str
+    sport_id: str
+    team_name: str
+
+    class Config:
+        from_attributes = True
+
+
+class MatchCreate(BaseModel):
+
+    sport_id: str
+    team1_id: str
+    team2_id: str
+    match_name: str
+    start_time: datetime
+    end_time: datetime
+
+
+class MatchResponse(BaseModel):
+
+    id: str
+    sport_id: str
+    team1_id: str
+    team2_id: str
+    match_name: str
+    start_time: datetime
+    end_time: datetime
+    status: str
+
+    class Config:
+        from_attributes = True
+
+
+class QuestionCreate(BaseModel):
+
+    match_id: str
+    question_text: str
+    entry_fee: int
+    start_time: datetime
+    end_time: datetime
+    options: list[str]
+
+
+class OptionResponse(BaseModel):
+
+    id: str
+    option_text: str
+
+    class Config:
+        from_attributes = True
+
+
+class QuestionResponse(BaseModel):
+
+    id: str
+    match_id: str
+    question_text: str
+    entry_fee: int
+    start_time: datetime
+    end_time: datetime
+    status: str
+    options: list[OptionResponse]
+
+    class Config:
+        from_attributes = True
+
+
+class AnswerCreate(BaseModel):
+
+    question_id: str
+    option_id: str
+
+
+class AnswerResponse(BaseModel):
+
+    id: str
+    user_id: str
+    question_id: str
+    option_id: str
+
+    class Config:
+        from_attributes = True

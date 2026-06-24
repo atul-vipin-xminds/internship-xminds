@@ -68,7 +68,9 @@ async def lifespan(
                 ),
                 role="admin",
                 points=0,
-                device_id="admin-device"
+                device_id="admin-device",
+                referral_code="ADMIN001",
+                referred_by=None
             )
 
             db.add(

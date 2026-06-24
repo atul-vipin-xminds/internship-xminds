@@ -20,7 +20,7 @@ class UserLogin(BaseModel):
     password: str
 
 
-cclass UserResponse(BaseModel):
+class UserResponse(BaseModel):
 
     id: str
     name: str

@@ -12,82 +12,41 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    name: Mapped[str] = mapped_column(
-        String(100)
-    )
+    name: Mapped[str] = mapped_column(String(100))
 
-    username: Mapped[str] = mapped_column(
-        String(50),
-        unique=True
-    )
+    username: Mapped[str] = mapped_column(String(50), unique=True)
 
-    email: Mapped[str] = mapped_column(
-        String(100),
-        unique=True
-    )
+    email: Mapped[str] = mapped_column(String(100), unique=True)
 
-    password: Mapped[str] = mapped_column(
-        String(255)
-    )
+    password: Mapped[str] = mapped_column(String(255))
 
-    role: Mapped[str] = mapped_column(
-        String(20),
-        default="user"
-    )
+    role: Mapped[str] = mapped_column(String(20), default="user")
 
-    points: Mapped[int] = mapped_column(
-        Integer,
-        default=500
-    )
+    points: Mapped[int] = mapped_column(Integer, default=500)
 
-    device_id: Mapped[str] = mapped_column(
-        String(255),
-        nullable=True
-    )
+    device_id: Mapped[str] = mapped_column(String(255), nullable=True)
 
-    referral_code: Mapped[str] = mapped_column(
-        String(20),
-        unique=True
-    )
+    referral_code: Mapped[str] = mapped_column(String(20), unique=True)
 
-    referred_by: Mapped[str] = mapped_column(
-        String(36),
-        nullable=True
-    )
+    referred_by: Mapped[str] = mapped_column(String(36), nullable=True)
 
 
 class Sport(Base):
-
     __tablename__ = "sports"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    name: Mapped[str] = mapped_column(
-        String(100),
-        unique=True
-    )
+    name: Mapped[str] = mapped_column(String(100), unique=True)
 
-    teams = relationship(
-        "Team",
-        back_populates="sport",
-        cascade="all, delete-orphan"
-    )
+    teams = relationship("Team", back_populates="sport", cascade="all, delete-orphan")
 
     matches = relationship(
-        "Match",
-        back_populates="sport",
-        cascade="all, delete-orphan"
+        "Match", back_populates="sport", cascade="all, delete-orphan"
     )
 
 
@@ -96,24 +55,14 @@ class Team(Base):
     __tablename__ = "teams"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    sport_id: Mapped[str] = mapped_column(
-        ForeignKey("sports.id")
-    )
+    sport_id: Mapped[str] = mapped_column(ForeignKey("sports.id"))
 
-    team_name: Mapped[str] = mapped_column(
-        String(100)
-    )
+    team_name: Mapped[str] = mapped_column(String(100))
 
-    sport = relationship(
-        "Sport",
-        back_populates="teams"
-    )
+    sport = relationship("Sport", back_populates="teams")
 
 
 class Match(Base):
@@ -121,50 +70,27 @@ class Match(Base):
     __tablename__ = "matches"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    sport_id: Mapped[str] = mapped_column(
-        ForeignKey("sports.id")
-    )
+    sport_id: Mapped[str] = mapped_column(ForeignKey("sports.id"))
 
-    team1_id: Mapped[str] = mapped_column(
-        ForeignKey("teams.id")
-    )
+    team1_id: Mapped[str] = mapped_column(ForeignKey("teams.id"))
 
-    team2_id: Mapped[str] = mapped_column(
-        ForeignKey("teams.id")
-    )
+    team2_id: Mapped[str] = mapped_column(ForeignKey("teams.id"))
 
-    match_name: Mapped[str] = mapped_column(
-        String(255)
-    )
+    match_name: Mapped[str] = mapped_column(String(255))
 
-    start_time: Mapped[DateTime] = mapped_column(
-        DateTime
-    )
+    start_time: Mapped[DateTime] = mapped_column(DateTime)
 
-    end_time: Mapped[DateTime] = mapped_column(
-        DateTime
-    )
+    end_time: Mapped[DateTime] = mapped_column(DateTime)
 
-    status: Mapped[str] = mapped_column(
-        String(20),
-        default="upcoming"
-    )
+    status: Mapped[str] = mapped_column(String(20), default="upcoming")
 
-    sport = relationship(
-        "Sport",
-        back_populates="matches"
-    )
+    sport = relationship("Sport", back_populates="matches")
 
     questions = relationship(
-        "Question",
-        back_populates="match",
-        cascade="all, delete-orphan"
+        "Question", back_populates="match", cascade="all, delete-orphan"
     )
 
 
@@ -173,47 +99,25 @@ class Question(Base):
     __tablename__ = "questions"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    match_id: Mapped[str] = mapped_column(
-        ForeignKey("matches.id")
-    )
+    match_id: Mapped[str] = mapped_column(ForeignKey("matches.id"))
 
-    question_text: Mapped[str] = mapped_column(
-        String(255)
-    )
+    question_text: Mapped[str] = mapped_column(String(255))
 
-    entry_fee: Mapped[int] = mapped_column(
-        Integer,
-        default=100
-    )
+    entry_fee: Mapped[int] = mapped_column(Integer, default=100)
 
-    start_time: Mapped[DateTime] = mapped_column(
-        DateTime
-    )
+    start_time: Mapped[DateTime] = mapped_column(DateTime)
 
-    end_time: Mapped[DateTime] = mapped_column(
-        DateTime
-    )
+    end_time: Mapped[DateTime] = mapped_column(DateTime)
 
-    status: Mapped[str] = mapped_column(
-        String(20),
-        default="active"
-    )
+    status: Mapped[str] = mapped_column(String(20), default="active")
 
-    match = relationship(
-        "Match",
-        back_populates="questions"
-    )
+    match = relationship("Match", back_populates="questions")
 
     options = relationship(
-        "Option",
-        back_populates="question",
-        cascade="all, delete-orphan"
+        "Option", back_populates="question", cascade="all, delete-orphan"
     )
 
 
@@ -222,24 +126,14 @@ class Option(Base):
     __tablename__ = "options"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    question_id: Mapped[str] = mapped_column(
-        ForeignKey("questions.id")
-    )
+    question_id: Mapped[str] = mapped_column(ForeignKey("questions.id"))
 
-    option_text: Mapped[str] = mapped_column(
-        String(100)
-    )
+    option_text: Mapped[str] = mapped_column(String(100))
 
-    question = relationship(
-        "Question",
-        back_populates="options"
-    )
+    question = relationship("Question", back_populates="options")
 
 
 class Answer(Base):
@@ -247,25 +141,13 @@ class Answer(Base):
     __tablename__ = "answers"
 
     id: Mapped[str] = mapped_column(
-        String(36),
-        primary_key=True,
-        default=lambda: str(uuid.uuid4()),
-        index=True
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4()), index=True
     )
 
-    user_id: Mapped[str] = mapped_column(
-        ForeignKey("users.id")
-    )
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
 
-    question_id: Mapped[str] = mapped_column(
-        ForeignKey("questions.id")
-    )
+    question_id: Mapped[str] = mapped_column(ForeignKey("questions.id"))
 
-    option_id: Mapped[str] = mapped_column(
-        ForeignKey("options.id")
-    )
+    option_id: Mapped[str] = mapped_column(ForeignKey("options.id"))
 
-    submitted_at: Mapped[DateTime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow
-    )
+    submitted_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow)

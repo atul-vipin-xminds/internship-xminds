@@ -9,7 +9,6 @@ from models import Sport, Team, Match
 from schemas import MatchCreate
 from auth import admin_required
 
-
 router = APIRouter()
 
 
@@ -17,62 +16,38 @@ router = APIRouter()
 async def create_match(
     match: MatchCreate,
     current_user: dict = Depends(admin_required),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
 
     try:
 
-        result = await db.execute(
-            select(Sport).where(
-                Sport.id == match.sport_id
-            )
-        )
+        result = await db.execute(select(Sport).where(Sport.id == match.sport_id))
 
         sport = result.scalar_one_or_none()
 
         if not sport:
 
-            raise HTTPException(
-                status_code=404,
-                detail="Sport not found"
-            )
+            raise HTTPException(status_code=404, detail="Sport not found")
 
-        result = await db.execute(
-            select(Team).where(
-                Team.id == match.team1_id
-            )
-        )
+        result = await db.execute(select(Team).where(Team.id == match.team1_id))
 
         team1 = result.scalar_one_or_none()
 
         if not team1:
 
-            raise HTTPException(
-                status_code=404,
-                detail="Team 1 not found"
-            )
+            raise HTTPException(status_code=404, detail="Team 1 not found")
 
-        result = await db.execute(
-            select(Team).where(
-                Team.id == match.team2_id
-            )
-        )
+        result = await db.execute(select(Team).where(Team.id == match.team2_id))
 
         team2 = result.scalar_one_or_none()
 
         if not team2:
 
-            raise HTTPException(
-                status_code=404,
-                detail="Team 2 not found"
-            )
+            raise HTTPException(status_code=404, detail="Team 2 not found")
 
         if match.team1_id == match.team2_id:
 
-            raise HTTPException(
-                status_code=400,
-                detail="Teams must be different"
-            )
+            raise HTTPException(status_code=400, detail="Teams must be different")
 
         new_match = Match(
             sport_id=match.sport_id,
@@ -81,18 +56,14 @@ async def create_match(
             match_name=match.match_name,
             start_time=match.start_time,
             end_time=match.end_time,
-            status="upcoming"
+            status="upcoming",
         )
 
-        db.add(
-            new_match
-        )
+        db.add(new_match)
 
         await db.commit()
 
-        await db.refresh(
-            new_match
-        )
+        await db.refresh(new_match)
 
         return {
             "status": "success",
@@ -105,8 +76,8 @@ async def create_match(
                 "match_name": new_match.match_name,
                 "start_time": new_match.start_time,
                 "end_time": new_match.end_time,
-                "status": new_match.status
-            }
+                "status": new_match.status,
+            },
         }
 
     except HTTPException:
@@ -115,76 +86,50 @@ async def create_match(
 
     except Exception:
 
-        logging.error(
-            "Match creation failed",
-            exc_info=True
-        )
+        logging.error("Match creation failed", exc_info=True)
 
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/")
-async def get_matches(
-    db: AsyncSession = Depends(get_db)
-):
+async def get_matches(db: AsyncSession = Depends(get_db)):
 
     try:
 
-        result = await db.execute(
-            select(Match)
-        )
+        result = await db.execute(select(Match))
 
         matches = result.scalars().all()
 
         return {
             "status": "success",
             "response": "Matches fetched successfully",
-            "data": matches
+            "data": matches,
         }
 
     except Exception:
 
-        logging.error(
-            "Unable to fetch matches",
-            exc_info=True
-        )
+        logging.error("Unable to fetch matches", exc_info=True)
 
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/{match_id}")
-async def get_match(
-    match_id: str,
-    db: AsyncSession = Depends(get_db)
-):
+async def get_match(match_id: str, db: AsyncSession = Depends(get_db)):
 
     try:
 
-        result = await db.execute(
-            select(Match).where(
-                Match.id == match_id
-            )
-        )
+        result = await db.execute(select(Match).where(Match.id == match_id))
 
         match = result.scalar_one_or_none()
 
         if not match:
 
-            raise HTTPException(
-                status_code=404,
-                detail="Match not found"
-            )
+            raise HTTPException(status_code=404, detail="Match not found")
 
         return {
             "status": "success",
             "response": "Match fetched successfully",
-            "data": match
+            "data": match,
         }
 
     except HTTPException:
@@ -193,12 +138,6 @@ async def get_match(
 
     except Exception:
 
-        logging.error(
-            "Unable to fetch match",
-            exc_info=True
-        )
+        logging.error("Unable to fetch match", exc_info=True)
 
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error")

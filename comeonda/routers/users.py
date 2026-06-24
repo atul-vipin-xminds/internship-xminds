@@ -15,7 +15,6 @@ from schemas import UserCreate
 from jwt_utils import hash_password, verify_password, create_access_token
 from auth import get_current_user
 
-
 router = APIRouter()
 
 
@@ -27,23 +26,16 @@ conf = ConnectionConfig(
     MAIL_SERVER=settings.MAIL_SERVER,
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
-    USE_CREDENTIALS=True
+    USE_CREDENTIALS=True,
 )
 
 
 def generate_referral_code():
 
-    return ''.join(
-        random.choices(
-            string.ascii_uppercase + string.digits,
-            k=8
-        )
-    )
+    return "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 
-async def send_welcome_email(
-    email: str
-):
+async def send_welcome_email(email: str):
 
     message = MessageSchema(
         subject="Welcome to Come On Da",
@@ -53,7 +45,7 @@ Welcome to Come On Da.
 
 Your account has been created successfully.
 """,
-        subtype="plain"
+        subtype="plain",
     )
 
     fm = FastMail(conf)
@@ -61,9 +53,7 @@ Your account has been created successfully.
     await fm.send_message(message)
 
 
-async def send_referral_reward_email(
-    email: str
-):
+async def send_referral_reward_email(email: str):
 
     message = MessageSchema(
         subject="Referral Reward",
@@ -73,7 +63,7 @@ Congratulations!
 
 You earned 100 points because a user joined using your referral code.
 """,
-        subtype="plain"
+        subtype="plain",
     )
 
     fm = FastMail(conf)
@@ -85,25 +75,18 @@ You earned 100 points because a user joined using your referral code.
 async def register_user(
     user: UserCreate,
     background_tasks: BackgroundTasks,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
 
     try:
 
-        result = await db.execute(
-            select(User).where(
-                User.username == user.username
-            )
-        )
+        result = await db.execute(select(User).where(User.username == user.username))
 
         existing_user = result.scalar_one_or_none()
 
         if existing_user:
 
-            raise HTTPException(
-                status_code=400,
-                detail="Username already exists"
-            )
+            raise HTTPException(status_code=400, detail="Username already exists")
 
         referral_code = generate_referral_code()
 
@@ -112,10 +95,7 @@ async def register_user(
         if user.referral_code:
 
             result = await db.execute(
-                select(User).where(
-                    User.referral_code ==
-                    user.referral_code
-                )
+                select(User).where(User.referral_code == user.referral_code)
             )
 
             inviter = result.scalar_one_or_none()
@@ -126,23 +106,18 @@ async def register_user(
 
                 referred_by = inviter.id
 
-                background_tasks.add_task(
-                    send_referral_reward_email,
-                    inviter.email
-                )
+                background_tasks.add_task(send_referral_reward_email, inviter.email)
 
         new_user = User(
             name=user.name,
             username=user.username,
             email=user.email,
-            password=hash_password(
-                user.password
-            ),
+            password=hash_password(user.password),
             role="user",
             points=500,
             device_id=user.device_id,
             referral_code=referral_code,
-            referred_by=referred_by
+            referred_by=referred_by,
         )
 
         db.add(new_user)
@@ -151,17 +126,9 @@ async def register_user(
 
         await db.refresh(new_user)
 
-        background_tasks.add_task(
-            send_welcome_email,
-            user.email
-        )
+        background_tasks.add_task(send_welcome_email, user.email)
 
-        token = create_access_token(
-            {
-                "sub": new_user.username,
-                "role": new_user.role
-            }
-        )
+        token = create_access_token({"sub": new_user.username, "role": new_user.role})
 
         user_data = {
             "id": new_user.id,
@@ -171,15 +138,14 @@ async def register_user(
             "role": new_user.role,
             "points": new_user.points,
             "device_id": new_user.device_id,
-            "referral_code": new_user.referral_code
+            "referral_code": new_user.referral_code,
         }
 
         return {
             "status": "success",
-            "response":
-                f"Successfully registered with username {new_user.username}",
+            "response": f"Successfully registered with username {new_user.username}",
             "access_token": token,
-            "user_details": user_data
+            "user_details": user_data,
         }
 
     except HTTPException:
@@ -188,57 +154,33 @@ async def register_user(
 
     except Exception:
 
-        logging.error(
-            "User not able to register",
-            exc_info=True
-        )
+        logging.error("User not able to register", exc_info=True)
 
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.post("/login")
 async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: AsyncSession = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
 ):
 
     try:
 
         result = await db.execute(
-            select(User).where(
-                User.username ==
-                form_data.username
-            )
+            select(User).where(User.username == form_data.username)
         )
 
         db_user = result.scalar_one_or_none()
 
         if not db_user:
 
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid username"
-            )
+            raise HTTPException(status_code=401, detail="Invalid username")
 
-        if not verify_password(
-            form_data.password,
-            db_user.password
-        ):
+        if not verify_password(form_data.password, db_user.password):
 
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid password"
-            )
+            raise HTTPException(status_code=401, detail="Invalid password")
 
-        token = create_access_token(
-            {
-                "sub": db_user.username,
-                "role": db_user.role
-            }
-        )
+        token = create_access_token({"sub": db_user.username, "role": db_user.role})
 
         user_data = {
             "id": db_user.id,
@@ -248,14 +190,10 @@ async def login(
             "role": db_user.role,
             "points": db_user.points,
             "device_id": db_user.device_id,
-            "referral_code": db_user.referral_code
+            "referral_code": db_user.referral_code,
         }
 
-        return {
-            "status": "success",
-            "access_token": token,
-            "user_details": user_data
-        }
+        return {"status": "success", "access_token": token, "user_details": user_data}
 
     except HTTPException:
 
@@ -263,34 +201,20 @@ async def login(
 
     except Exception:
 
-        logging.error(
-            "User not able to login",
-            exc_info=True
-        )
+        logging.error("User not able to login", exc_info=True)
 
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/profile")
 async def profile(
-    current_user: dict = Depends(
-        get_current_user
-    ),
-    db: AsyncSession = Depends(
-        get_db
-    )
+    current_user: dict = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
 
     try:
 
         result = await db.execute(
-            select(User).where(
-                User.username ==
-                current_user["sub"]
-            )
+            select(User).where(User.username == current_user["sub"])
         )
 
         user = result.scalar_one_or_none()
@@ -306,18 +230,12 @@ async def profile(
                 "points": user.points,
                 "device_id": user.device_id,
                 "referral_code": user.referral_code,
-                "referred_by": user.referred_by
-            }
+                "referred_by": user.referred_by,
+            },
         }
 
     except Exception:
 
-        logging.error(
-            "Unable to fetch profile",
-            exc_info=True
-        )
+        logging.error("Unable to fetch profile", exc_info=True)
 
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error"
-        )
+        raise HTTPException(status_code=500, detail="Internal server error")

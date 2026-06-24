@@ -31,6 +31,7 @@ class UserResponse(BaseModel):
     device_id: str | None
     referral_code: str
     referred_by: str | None
+
     class Config:
         from_attributes = True
 
